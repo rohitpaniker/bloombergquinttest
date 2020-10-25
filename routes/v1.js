@@ -12,12 +12,7 @@ const cabs = cabsModel;
 const cabOnHire = {};
 
 router.get('/', (req, res) => {
-  res.render('index', { title: `Hello There! Welcome to Füber API.
-  \r\n[GET] /cabs => Show fleets of available cabs` });
-});
-
-router.get('/randomcoord', (req, res) => {
-  res.send(generateRandomCoords());
+  res.render('index', { title: 'Hello There! Welcome to Füber API' });
 });
 
 router.get('/cabs', (req, res) => {
