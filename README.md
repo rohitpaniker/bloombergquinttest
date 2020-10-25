@@ -23,8 +23,9 @@ This is Füber only API whcih has the capabilities mentioned below:
           "preference": "Pink"
         }
 
-        **NOTE** These coordinates: 19.0061577, 72.828873 are dummy, please the coordinates you would like to pass
    - [GET] **END A RIDE** ```localhost:3000/api/v1/endride/<YOUR_END_RIDE_TOKEN>```
+
+   **NOTE** These coordinates: 19.0061577, 72.828873 are dummy, please the coordinates you would like to pass
 
 ## Usage
 
