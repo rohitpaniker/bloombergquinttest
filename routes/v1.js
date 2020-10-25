@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const randomLocation = require('random-location');
 const { customersModel } = require('./../models/customers');
 const { cabsModel } = require('./../models/cabs');
 const { generateRandomCoords, calcDistanceBetweenInKMS, dateDiffToString }  = require("./../utils/helper");
@@ -9,10 +8,6 @@ const customerEnroute = [];
 
 const customers = customersModel;
 const cabs = cabsModel;
-
-const calculateDistanceCovered = () => {
-  return 0;
-}
 
 const cabOnHire = {};
 
@@ -39,7 +34,7 @@ router.post('/book', async (req, res) => {
 
   const {customerId, pickupCoords} = req.body;
 
-  let preferrence = "Normal";
+  let preference = "Normal";
 
   const currentCustomer = {
     index: -1
@@ -58,8 +53,8 @@ router.post('/book', async (req, res) => {
   let isAnyCabFree = false;
   let cabIDNumber = "";
 
-  if(req.body.preferrence && req.body.preferrence === "Pink") {
-    preferrence = "Pink"
+  if(req.body.preference && req.body.preference === "Pink") {
+    preference = "Pink"
   }
 
   for(cust in customers) {
@@ -89,7 +84,7 @@ router.post('/book', async (req, res) => {
   }
 
   for(cab in cabs) {
-    if(cabs[cab].isBooked === false && cabs[cab].cabType === preferrence) {
+    if(cabs[cab].isBooked === false && cabs[cab].cabType === preference) {
       const pickupDistance = await calcDistanceBetweenInKMS(cabs[cab].cabLocation.latitude, cabs[cab].cabLocation.longitude, customerPickupCoords.latitude, customerPickupCoords.longitude);
       
       if(pickupDistance > INITIAL_RADIUS_LIMIT) {
@@ -128,7 +123,7 @@ router.post('/book', async (req, res) => {
     customerIndex: currentCustomer.index,
     cabNumber: cabs[freeCabFound.index].cabNumber,
     bookedBy: customers[currentCustomer.index].customerId,
-    preferrence,
+    preference,
     pickupCoords: {
       latitude: customerPickupCoords.latitude,
       longitude: customerPickupCoords.longitude
@@ -158,12 +153,6 @@ router.get('/endride/:rideEndToken', async (req, res) => {
       error: "Invalid end ride token.",
     });
   }
-  
-  // if(dateDiffToString(customers[cabOnHire[rideEndToken].customerIndex].start, new Date()) < 5) {
-  //   return res.send({
-  //     error: "Minimum time to end ride is 5 minutes.",
-  //   });
-  // }
 
   const endRide = new Date();
   const totalTimeTookToTravel = await dateDiffToString(customers[cabOnHire[rideEndToken].customerIndex].start, endRide);
@@ -171,7 +160,7 @@ router.get('/endride/:rideEndToken', async (req, res) => {
   const endRideCoords = generateRandomCoords(INITIAL_CENTER_POINT, 80);
   
   const totalDistanceTravelledInKMS = await calcDistanceBetweenInKMS(cabOnHire[rideEndToken].pickupCoords.latitude, cabOnHire[rideEndToken].pickupCoords.longitude, endRideCoords.latitude, endRideCoords.longitude);
-  const preferrence = cabOnHire[rideEndToken].preferrence;
+  const preference = cabOnHire[rideEndToken].preference;
   cabs[cabOnHire[rideEndToken].cabIndex].cabLocation = endRideCoords;
   cabs[cabOnHire[rideEndToken].cabIndex].isBooked = false;
   cabs[cabOnHire[rideEndToken].cabIndex].occupiedBy = 0;
@@ -180,7 +169,7 @@ router.get('/endride/:rideEndToken', async (req, res) => {
   customerEnroute.splice(cabOnHire[rideEndToken].customerIndex, 1);
   delete cabOnHire[rideEndToken];
 
-  const TOTAL_FARE = preferrence === "Normal" ? (totalDistanceTravelledInKMS*PER_KM_COST) + (totalTimeTookToTravel*PER_MIN_COST) : (totalDistanceTravelledInKMS*PER_KM_COST) + (totalTimeTookToTravel*PER_MIN_COST) + PINK_CAR_COST;
+  const TOTAL_FARE = preference === "Normal" ? (totalDistanceTravelledInKMS*PER_KM_COST) + (totalTimeTookToTravel*PER_MIN_COST) : (totalDistanceTravelledInKMS*PER_KM_COST) + (totalTimeTookToTravel*PER_MIN_COST) + PINK_CAR_COST;
   
   res.send({
     message: "Thank you for choosing Füber.",

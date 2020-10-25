@@ -20,6 +20,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', v1);
 
+app.get('/', (req, res) => {
+  res.redirect('/api/v1');
+})
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

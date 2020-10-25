@@ -1,7 +1,8 @@
 const { INITIAL_CENTER_POINT, INITIAL_RADIUS_LIMIT } = require("./../constants/constants");
 const randomLocation = require('random-location');
 
-const generateNumberPlate = () => `MH ${Math.floor(01 + Math.random() * 50)} AK ${Math.floor(1000 + Math.random() * 9000)}`
+const generateDigits = (length) => Math.floor(1 + Math.random() * length);
+const generateNumberPlate = () => `MH ${generateDigits(50)} AK ${generateDigits(9000)}`;
 
 const generateRandomCoords = (centerPoint = null, radiusLimit = null) => {
     if(centerPoint === null || radiusLimit === null ) {
