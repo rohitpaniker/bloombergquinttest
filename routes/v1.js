@@ -90,6 +90,12 @@ router.post('/book', async (req, res) => {
 
   for(cab in cabs) {
     if(cabs[cab].isBooked === false && cabs[cab].cabType === preferrence) {
+      const pickupDistance = await calcDistanceBetweenInKMS(cabs[cab].cabLocation.latitude, cabs[cab].cabLocation.longitude, customerPickupCoords.latitude, customerPickupCoords.longitude);
+      
+      if(pickupDistance > INITIAL_RADIUS_LIMIT) {
+        return;
+      }
+      
       isAnyCabFree = true;
       freeCabFound.index = cab;
       break;
@@ -146,11 +152,25 @@ router.post('/book', async (req, res) => {
 
 router.get('/endride/:rideEndToken', async (req, res) => {
   const { rideEndToken } = req.params;
-  const endRideCoords = generateRandomCoords(INITIAL_CENTER_POINT, 80);
+
+  if(!cabOnHire[rideEndToken]) {
+    return res.send({
+      error: "Invalid end ride token.",
+    });
+  }
+  
+  // if(dateDiffToString(customers[cabOnHire[rideEndToken].customerIndex].start, new Date()) < 5) {
+  //   return res.send({
+  //     error: "Minimum time to end ride is 5 minutes.",
+  //   });
+  // }
+
   const endRide = new Date();
+  const totalTimeTookToTravel = await dateDiffToString(customers[cabOnHire[rideEndToken].customerIndex].start, endRide);
+  
+  const endRideCoords = generateRandomCoords(INITIAL_CENTER_POINT, 80);
   
   const totalDistanceTravelledInKMS = await calcDistanceBetweenInKMS(cabOnHire[rideEndToken].pickupCoords.latitude, cabOnHire[rideEndToken].pickupCoords.longitude, endRideCoords.latitude, endRideCoords.longitude);
-  const totalTimeTookToTravel = await dateDiffToString(customers[cabOnHire[rideEndToken].customerIndex].start, endRide);
   const preferrence = cabOnHire[rideEndToken].preferrence;
   cabs[cabOnHire[rideEndToken].cabIndex].cabLocation = endRideCoords;
   cabs[cabOnHire[rideEndToken].cabIndex].isBooked = false;
