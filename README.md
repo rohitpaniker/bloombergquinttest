@@ -25,7 +25,7 @@ This is Füber only API whcih has the capabilities mentioned below:
 
    - [GET] **END A RIDE** ```localhost:3000/api/v1/endride/<YOUR_END_RIDE_TOKEN>```
 
-   **NOTE** These coordinates: 19.0061577, 72.828873 are dummy, please the coordinates you would like to pass
+   **NOTE** These coordinates: 19.0061577, 72.828873 are dummy, please pass the coordinates you would like to have as initial coordinates
 
 ## Usage
 
@@ -39,7 +39,7 @@ This is Füber only API whcih has the capabilities mentioned below:
 
 ## Change Initial Coordinates for all cabs
 
-Initially all cabs are assigned coordinates which falls within 5 kilometers of predefined coordinates specified in constants.js. These coordinates are of BloombergQuint Office in Parel.
+Initially all cabs are assigned coordinates which falls within 5 kilometers of predefined coordinates specified in constants.js. These coordinates are of BloombergQuint Office in One Indiabulls Centre.
 
 ``` 
   const INITIAL_CENTER_POINT = {
